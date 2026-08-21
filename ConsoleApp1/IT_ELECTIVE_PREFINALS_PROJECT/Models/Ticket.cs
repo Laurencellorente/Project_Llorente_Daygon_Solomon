@@ -28,7 +28,7 @@ namespace IT_ELECTIVE_PREFINALS_PROJECT.Models
 
         public string? DueAt { get; set; }
 
-        // Foreign Key Navigation Properties
+        
         [ForeignKey("StatusId")]
         public Status? Status { get; set; }
 
