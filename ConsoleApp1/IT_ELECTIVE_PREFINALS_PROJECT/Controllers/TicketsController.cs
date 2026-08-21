@@ -15,42 +15,47 @@ namespace IT_ELECTIVE_PREFINALS_PROJECT.Controllers
             _context = context;
         }
 
-        // GET: Tickets/Assign/5
-        public async Task<IActionResult> Assign(int? id)
+        // GET: Tickets
+        public async Task<IActionResult> Index(string? searchString, int? statusId, int? priorityId, int? categoryId)
         {
-            if (id == null) return NotFound();
+            var tickets = _context.Tickets
+                .Include(t => t.Customer)
+                .Include(t => t.Status)
+                .Include(t => t.Priority)
+                .Include(t => t.Category)
+                .AsQueryable();
 
-            var ticket = await _context.Tickets
-                .FirstOrDefaultAsync(m => m.Id == id);
+            // Apply Text Search (Title or Description)
+            if (!string.IsNullOrWhiteSpace(searchString))
+            {
+                tickets = tickets.Where(t => t.Title.Contains(searchString) || t.Description.Contains(searchString));
+            }
 
-            if (ticket == null) return NotFound();
+            // Apply Status Filter
+            if (statusId.HasValue)
+            {
+                tickets = tickets.Where(t => t.StatusId == statusId.Value);
+            }
 
-            PopulateEmployeeDropdown();
-            return View(ticket);
-        }
+            // Apply Priority Filter
+            if (priorityId.HasValue)
+            {
+                tickets = tickets.Where(t => t.PriorityId == priorityId.Value);
+            }
 
-        // POST: Tickets/Assign/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Assign(int id, int? assignedEmployeeId)
-        {
-            var ticket = await _context.Tickets.FindAsync(id);
-            if (ticket == null) return NotFound();
+            // Apply Category Filter
+            if (categoryId.HasValue)
+            {
+                tickets = tickets.Where(t => t.CategoryId == categoryId.Value);
+            }
 
-            // Note: Add an AssignedEmployeeId property to your Ticket model if tracked in DB
-            _context.Update(ticket);
-            await _context.SaveChangesAsync();
+            // Populate Filter Dropdowns
+            ViewBag.StatusId = new SelectList(_context.Statuses, "Id", "Name", statusId);
+            ViewBag.PriorityId = new SelectList(_context.Priorities, "Id", "Name", priorityId);
+            ViewBag.CategoryId = new SelectList(_context.Categories, "Id", "Name", categoryId);
+            ViewBag.CurrentSearch = searchString;
 
-            return RedirectToAction(nameof(Index));
-        }
-
-        private void PopulateEmployeeDropdown(object? selectedEmployee = null)
-        {
-            var employees = _context.Employees
-                .Select(e => new { Id = e.Id, FullName = e.FirstName + " " + e.LastName })
-                .ToList();
-
-            ViewBag.AssignedEmployeeId = new SelectList(employees, "Id", "FullName", selectedEmployee);
+            return View(await tickets.ToListAsync());
         }
     }
 }

@@ -1,3 +1,79 @@
-﻿<a asp-controller="Tickets" asp-action="ExportCsv" class="btn btn-outline-success mb-3">
-    <i class="bi bi-file-earmark-spreadsheet"></i> Export to CSV
-</a>
+﻿@model IEnumerable<IT_ELECTIVE_PREFINALS_PROJECT.Models.Ticket>
+
+@{
+    ViewData["Title"] = "Tickets List";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>Ticket Management</h2>
+    <a asp-action="Create" class="btn btn-primary">Create New Ticket</a>
+</div>
+
+<!-- Search & Filter Bar -->
+<form method="get" asp-action="Index" class="card card-body bg-light mb-4">
+    <div class="row g-3">
+        <div class="col-md-3">
+            <input type="text" name="searchString" value="@ViewBag.CurrentSearch" class="form-control" placeholder="Search title or description..." />
+        </div>
+        <div class="col-md-2">
+            <select name="statusId" class="form-select" asp-items="ViewBag.StatusId">
+                <option value="">-- All Statuses --</option>
+            </select>
+        </div>
+        <div class="col-md-2">
+            <select name="priorityId" class="form-select" asp-items="ViewBag.PriorityId">
+                <option value="">-- All Priorities --</option>
+            </select>
+        </div>
+        <div class="col-md-2">
+            <select name="categoryId" class="form-select" asp-items="ViewBag.CategoryId">
+                <option value="">-- All Categories --</option>
+            </select>
+        </div>
+        <div class="col-md-3 d-flex gap-2">
+            <button type="submit" class="btn btn-secondary w-100">Filter</button>
+            <a asp-action="Index" class="btn btn-outline-secondary w-100">Reset</a>
+        </div>
+    </div>
+</form>
+
+<!-- Tickets Table -->
+<table class="table table-striped table-hover align-middle">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Title</th>
+            <th>Customer</th>
+            <th>Category</th>
+            <th>Priority</th>
+            <th>Status</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (!Model.Any())
+        {
+            <tr>
+                <td colspan="7" class="text-center text-muted">No tickets found matching your criteria.</td>
+            </tr>
+        }
+        else
+        {
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.Id</td>
+                    <td>@item.Title</td>
+                    <td>@(item.Customer?.CompanyName ?? "N/A")</td>
+                    <td>@(item.Category?.Name ?? "N/A")</td>
+                    <td><span class="badge bg-warning text-dark">@(item.Priority?.Name ?? "N/A")</span></td>
+                    <td><span class="badge bg-info text-dark">@(item.Status?.Name ?? "N/A")</span></td>
+                    <td>
+                        <a asp-action="UpdateStatus" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary">Status</a>
+                        <a asp-action="Assign" asp-route-id="@item.Id" class="btn btn-sm btn-outline-secondary">Assign</a>
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
