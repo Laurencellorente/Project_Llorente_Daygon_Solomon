@@ -1,0 +1,68 @@
+﻿@model IT_ELECTIVE_PREFINALS_PROJECT.ViewModels.TeamManagementViewModel
+
+@{
+    ViewData["Title"] = "Teams Management";
+}
+
+<div class="container mt-4">
+    <h2><i class="bi bi-people-fill"></i> IT Support Teams</h2>
+    <hr />
+
+    <div class="row">
+        
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-dark text-white">
+                    <h5 class="mb-0">Existing Teams</h5>
+                </div>
+                <div class="card-body">
+                    <table class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Description</th>
+                                <th>Department ID</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var team in Model.Teams)
+                            {
+                                <tr>
+                                    <td><strong>@team.Name</strong></td>
+                                    <td>@(team.Description ?? "No description")</td>
+                                    <td>@team.DepartmentId</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        
+        <div class="col-md-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Add New Team</h5>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Create" method="post">
+                        <div class="mb-3">
+                            <label asp-for="NewTeam.Name" class="form-label">Team Name</label>
+                            <input asp-for="NewTeam.Name" class="form-control" required />
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="NewTeam.DepartmentId" class="form-label">Department ID</label>
+                            <input asp-for="NewTeam.DepartmentId" type="number" class="form-control" required />
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="NewTeam.Description" class="form-label">Description</label>
+                            <textarea asp-for="NewTeam.Description" class="form-control" rows="2"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-success w-100"><i class="bi bi-plus-circle"></i> Create Team</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
