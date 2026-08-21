@@ -1,0 +1,64 @@
+﻿@model IT_ELECTIVE_PREFINALS_PROJECT.Models.Ticket
+
+@{
+    ViewData["Title"] = "Create Ticket";
+}
+
+<h2>Create New Ticket</h2>
+<hr />
+
+<div class="row">
+    <div class="col-md-8">
+        <form asp-action="Create">
+            <div class="mb-3">
+                <label asp-for="Title" class="form-label"></label>
+                <input asp-for="Title" class="form-control" />
+                <span asp-validation-for="Title" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Description" class="form-label"></label>
+                <textarea asp-for="Description" class="form-control" rows="4"></textarea>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label asp-for="CustomerId" class="form-label">Customer</label>
+                    <select asp-for="CustomerId" class="form-select" asp-items="ViewBag.CustomerId">
+                        <option value="">-- Select Customer --</option>
+                    </select>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label asp-for="CategoryId" class="form-label">Category</label>
+                    <select asp-for="CategoryId" class="form-select" asp-items="ViewBag.CategoryId">
+                        <option value="">-- Select Category --</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label asp-for="PriorityId" class="form-label">Priority</label>
+                    <select asp-for="PriorityId" class="form-select" asp-items="ViewBag.PriorityId">
+                        <option value="">-- Select Priority --</option>
+                    </select>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label asp-for="StatusId" class="form-label">Status</label>
+                    <select asp-for="StatusId" class="form-select" asp-items="ViewBag.StatusId">
+                        <option value="">-- Select Status --</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="DueAt" class="form-label">Due Date</label>
+                <input asp-for="DueAt" type="datetime-local" class="form-control" />
+            </div>
+
+            <button type="submit" class="btn btn-primary">Create Ticket</button>
+            <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+        </form>
+    </div>
+</div>
