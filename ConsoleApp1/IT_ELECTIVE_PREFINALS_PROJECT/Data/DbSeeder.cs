@@ -1,5 +1,4 @@
-﻿nameusing IT_ELECTIVE_PREFINALS_PROJECT.Models;
-
+﻿using IT_ELECTIVE_PREFINALS_PROJECT.Models;
 namespace IT_ELECTIVE_PREFINALS_PROJECT.Data
 {
     public static class DbSeeder
