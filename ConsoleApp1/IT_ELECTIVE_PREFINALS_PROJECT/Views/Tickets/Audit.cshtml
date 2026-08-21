@@ -1,0 +1,41 @@
+﻿@model IEnumerable<IT_ELECTIVE_PREFINALS_PROJECT.Models.TicketHistory>
+
+@{
+    ViewData["Title"] = "Ticket Audit Log";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>Audit Log for Ticket #@ViewBag.TicketId</h2>
+    <a asp-action="Index" class="btn btn-secondary">Back to Tickets</a>
+</div>
+
+<table class="table table-striped table-bordered align-middle">
+    <thead class="table-dark">
+        <tr>
+            <th>Log ID</th>
+            <th>Action</th>
+            <th>Description</th>
+            <th>Timestamp</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (!Model.Any())
+        {
+            <tr>
+                <td colspan="4" class="text-center text-muted">No audit history recorded for this ticket.</td>
+            </tr>
+        }
+        else
+        {
+            @foreach (var log in Model)
+            {
+                <tr>
+                    <td>#@log.Id</td>
+                    <td><span class="badge bg-primary">@log.Action</span></td>
+                    <td>@log.Description</td>
+                    <td>@log.ChangedAt</td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
