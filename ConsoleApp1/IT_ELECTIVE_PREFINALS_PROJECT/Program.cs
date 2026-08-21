@@ -1,25 +1,25 @@
 using Microsoft.EntityFrameworkCore;
 using IT_ELECTIVE_PREFINALS_PROJECT.Data;
+using IT_ELECTIVE_PREFINALS_PROJECT.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 builder.Services.AddControllersWithViews();
 
-// Register SQLite AppDbContext
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+builder.Services.AddScoped<IItemRepository, ItemRepository>();
+
 var app = builder.Build();
 
-// Seed initial database records
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     DbSeeder.Seed(context);
 }
 
-// Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
