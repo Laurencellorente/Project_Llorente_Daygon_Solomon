@@ -1,7 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace IT_ELECTIVE_PREFINALS_PROJECT.Models
 {
+    [Table("Customers")]
     public class Customer
     {
         [Key]
@@ -9,13 +11,18 @@ namespace IT_ELECTIVE_PREFINALS_PROJECT.Models
 
         [Required]
         [StringLength(100)]
-        public string FullName { get; set; } = string.Empty;
+        public string CompanyName { get; set; } = string.Empty;
 
-        [Required]
-        [EmailAddress]
-        public string Email { get; set; } = string.Empty;
+        [StringLength(100)]
+        public string? ContactName { get; set; }
 
-        
+        [StringLength(100)]
+        public string? Email { get; set; }
+
+        [StringLength(20)]
+        public string? Phone { get; set; }
+
+        // Navigation property for related tickets
         public ICollection<Ticket> Tickets { get; set; } = new List<Ticket>();
     }
 }
