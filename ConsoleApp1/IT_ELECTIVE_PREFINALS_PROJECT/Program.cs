@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using IT_ELECTIVE_PREFINALS_PROJECT.Data;
 using IT_ELECTIVE_PREFINALS_PROJECT.Repositories;
+using IT_ELECTIVE_PREFINALS_PROJECT.Services; 
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +13,9 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddScoped<IItemRepository, ItemRepository>();
+
+
+builder.Services.AddScoped<IFileUploadService, FileUploadService>();
 
 var app = builder.Build();
 
@@ -29,7 +33,9 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
+
 app.UseRouting();
+
 app.UseAuthorization();
 
 app.MapControllerRoute(
