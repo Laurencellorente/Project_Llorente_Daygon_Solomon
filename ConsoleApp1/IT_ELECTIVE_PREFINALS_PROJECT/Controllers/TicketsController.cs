@@ -1,7 +1,6 @@
 ﻿using IT_ELECTIVE_PREFINALS_PROJECT.Data;
 using IT_ELECTIVE_PREFINALS_PROJECT.Models;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 
 namespace IT_ELECTIVE_PREFINALS_PROJECT.Controllers
@@ -15,47 +14,34 @@ namespace IT_ELECTIVE_PREFINALS_PROJECT.Controllers
             _context = context;
         }
 
-        // GET: Tickets
-        public async Task<IActionResult> Index(string? searchString, int? statusId, int? priorityId, int? categoryId)
+        // GET: Tickets/Audit/5
+        public async Task<IActionResult> Audit(int? id)
         {
-            var tickets = _context.Tickets
-                .Include(t => t.Customer)
-                .Include(t => t.Status)
-                .Include(t => t.Priority)
-                .Include(t => t.Category)
-                .AsQueryable();
+            if (id == null) return NotFound();
 
-            // Apply Text Search (Title or Description)
-            if (!string.IsNullOrWhiteSpace(searchString))
+            var history = await _context.TicketHistories
+                .Include(h => h.Ticket)
+                .Where(h => h.TicketId == id)
+                .OrderByDescending(h => h.ChangedAt)
+                .ToListAsync();
+
+            ViewBag.TicketId = id;
+            return View(history);
+        }
+
+        // Helper method to log audit events
+        private async Task LogAuditAsync(int ticketId, string action, string description)
+        {
+            var history = new TicketHistory
             {
-                tickets = tickets.Where(t => t.Title.Contains(searchString) || t.Description.Contains(searchString));
-            }
+                TicketId = ticketId,
+                Action = action,
+                Description = description,
+                ChangedAt = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss")
+            };
 
-            // Apply Status Filter
-            if (statusId.HasValue)
-            {
-                tickets = tickets.Where(t => t.StatusId == statusId.Value);
-            }
-
-            // Apply Priority Filter
-            if (priorityId.HasValue)
-            {
-                tickets = tickets.Where(t => t.PriorityId == priorityId.Value);
-            }
-
-            // Apply Category Filter
-            if (categoryId.HasValue)
-            {
-                tickets = tickets.Where(t => t.CategoryId == categoryId.Value);
-            }
-
-            // Populate Filter Dropdowns
-            ViewBag.StatusId = new SelectList(_context.Statuses, "Id", "Name", statusId);
-            ViewBag.PriorityId = new SelectList(_context.Priorities, "Id", "Name", priorityId);
-            ViewBag.CategoryId = new SelectList(_context.Categories, "Id", "Name", categoryId);
-            ViewBag.CurrentSearch = searchString;
-
-            return View(await tickets.ToListAsync());
+            _context.TicketHistories.Add(history);
+            await _context.SaveChangesAsync();
         }
     }
 }

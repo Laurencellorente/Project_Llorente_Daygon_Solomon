@@ -18,6 +18,7 @@ namespace IT_ELECTIVE_PREFINALS_PROJECT.Data
         public DbSet<Department> Departments { get; set; }
         public DbSet<Employee> Employees { get; set; }
         public DbSet<Item> Items { get; set; }
+        public DbSet<TicketHistory> TicketHistories { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -31,6 +32,7 @@ namespace IT_ELECTIVE_PREFINALS_PROJECT.Data
             modelBuilder.Entity<Department>().ToTable("Departments");
             modelBuilder.Entity<Employee>().ToTable("Employees");
             modelBuilder.Entity<Item>().ToTable("Items");
+            modelBuilder.Entity<TicketHistory>().ToTable("TicketHistories");
         }
     }
 }
