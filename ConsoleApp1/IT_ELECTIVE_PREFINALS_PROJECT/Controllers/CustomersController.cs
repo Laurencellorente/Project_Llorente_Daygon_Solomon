@@ -34,6 +34,25 @@ namespace IT_ELECTIVE_PREFINALS_PROJECT.Controllers
             return View(customer);
         }
 
+        // GET: Customers/Portal/5
+        public async Task<IActionResult> Portal(int? id)
+        {
+            if (id == null) return NotFound();
+
+            var customer = await _context.Customers
+                .Include(c => c.Tickets)
+                    .ThenInclude(t => t.Status)
+                .Include(c => c.Tickets)
+                    .ThenInclude(t => t.Priority)
+                .Include(c => c.Tickets)
+                    .ThenInclude(t => t.Category)
+                .FirstOrDefaultAsync(m => m.Id == id);
+
+            if (customer == null) return NotFound();
+
+            return View(customer);
+        }
+
         // GET: Customers/Create
         public IActionResult Create()
         {

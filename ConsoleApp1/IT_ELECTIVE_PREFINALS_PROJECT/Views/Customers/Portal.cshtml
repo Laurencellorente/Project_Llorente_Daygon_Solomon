@@ -1,0 +1,54 @@
+﻿@model IT_ELECTIVE_PREFINALS_PROJECT.Models.Customer
+
+@{
+    ViewData["Title"] = "Customer Portal";
+}
+
+<div class="container py-4">
+    <div class="card mb-4 shadow-sm">
+        <div class="card-body">
+            <h2 class="card-title text-primary">@Model.CompanyName</h2>
+            <p class="card-subtitle text-muted mb-2"><strong>Contact:</strong> @Model.ContactName | <strong>Email:</strong> @Model.Email | <strong>Phone:</strong> @Model.Phone</p>
+        </div>
+    </div>
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3>Your Submitted Tickets</h3>
+        <a asp-controller="Tickets" asp-action="Create" class="btn btn-success">+ Submit New Ticket</a>
+    </div>
+
+    <table class="table table-bordered table-hover align-middle">
+        <thead class="table-light">
+            <tr>
+                <th>Ticket ID</th>
+                <th>Title</th>
+                <th>Category</th>
+                <th>Priority</th>
+                <th>Status</th>
+                <th>Created At</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.Tickets == null || !Model.Tickets.Any())
+            {
+                <tr>
+                    <td colspan="6" class="text-center text-muted">No tickets filed yet.</td>
+                </tr>
+            }
+            else
+            {
+                @foreach (var ticket in Model.Tickets)
+                {
+                    <tr>
+                        <td>#@ticket.Id</td>
+                        <td>@ticket.Title</td>
+                        <td>@(ticket.Category?.Name ?? "N/A")</td>
+                        <td><span class="badge bg-warning text-dark">@(ticket.Priority?.Name ?? "N/A")</span></td>
+                        <td><span class="badge bg-info text-dark">@(ticket.Status?.Name ?? "N/A")</span></td>
+                        <td>@ticket.CreatedAt</td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>
