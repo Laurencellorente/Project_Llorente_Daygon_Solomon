@@ -14,8 +14,6 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddScoped<IItemRepository, ItemRepository>();
 builder.Services.AddScoped<IFileUploadService, FileUploadService>();
-
-
 builder.Services.AddScoped<IAuditService, AuditService>();
 
 var app = builder.Build();
@@ -23,6 +21,10 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+
+    
+    context.Database.EnsureCreated();
+
     DbSeeder.Seed(context);
 }
 
