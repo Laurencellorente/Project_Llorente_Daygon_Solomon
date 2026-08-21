@@ -15,36 +15,50 @@ namespace IT_ELECTIVE_PREFINALS_PROJECT.Controllers
             _context = context;
         }
 
-        // GET: Tickets/Create
-        public IActionResult Create()
+        // GET: Tickets/UpdateStatus/5
+        public async Task<IActionResult> UpdateStatus(int? id)
         {
-            PopulateDropdowns();
-            return View();
-        }
+            if (id == null) return NotFound();
 
-        // POST: Tickets/Create
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Title,Description,StatusId,PriorityId,CategoryId,CustomerId,DueAt")] Ticket ticket)
-        {
-            if (ModelState.IsValid)
-            {
-                ticket.CreatedAt = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss");
-                _context.Add(ticket);
-                await _context.SaveChangesAsync();
-                return RedirectToAction("Index");
-            }
+            var ticket = await _context.Tickets
+                .Include(t => t.Status)
+                .FirstOrDefaultAsync(m => m.Id == id);
 
-            PopulateDropdowns(ticket);
+            if (ticket == null) return NotFound();
+
+            ViewBag.StatusId = new SelectList(_context.Statuses, "Id", "Name", ticket.StatusId);
             return View(ticket);
         }
 
-        private void PopulateDropdowns(Ticket? ticket = null)
+        // POST: Tickets/UpdateStatus/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UpdateStatus(int id, int statusId)
         {
-            ViewBag.StatusId = new SelectList(_context.Statuses, "Id", "Name", ticket?.StatusId);
-            ViewBag.PriorityId = new SelectList(_context.Priorities, "Id", "Name", ticket?.PriorityId);
-            ViewBag.CategoryId = new SelectList(_context.Categories, "Id", "Name", ticket?.CategoryId);
-            ViewBag.CustomerId = new SelectList(_context.Customers, "Id", "CompanyName", ticket?.CustomerId);
+            var ticket = await _context.Tickets.FindAsync(id);
+            if (ticket == null) return NotFound();
+
+            ticket.StatusId = statusId;
+            _context.Update(ticket);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        // POST: Tickets/QuickStatusUpdate (Inline Quick Actions)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> QuickStatusUpdate(int id, int statusId)
+        {
+            var ticket = await _context.Tickets.FindAsync(id);
+            if (ticket != null)
+            {
+                ticket.StatusId = statusId;
+                _context.Update(ticket);
+                await _context.SaveChangesAsync();
+            }
+
+            return RedirectToAction(nameof(Index));
         }
     }
 }
