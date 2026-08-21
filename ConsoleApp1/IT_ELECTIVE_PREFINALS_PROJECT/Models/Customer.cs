@@ -22,7 +22,7 @@ namespace IT_ELECTIVE_PREFINALS_PROJECT.Models
         [StringLength(20)]
         public string? Phone { get; set; }
 
-        // Navigation property for related tickets
+        
         public ICollection<Ticket> Tickets { get; set; } = new List<Ticket>();
     }
 }
