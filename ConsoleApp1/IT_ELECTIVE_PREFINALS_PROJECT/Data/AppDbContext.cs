@@ -15,6 +15,8 @@ namespace IT_ELECTIVE_PREFINALS_PROJECT.Data
         public DbSet<Category> Categories { get; set; }
         public DbSet<Priority> Priorities { get; set; }
         public DbSet<Status> Statuses { get; set; }
+
+        public DbSet<AuditLog> AuditLogs { get; set; }
         public DbSet<Department> Departments { get; set; }
         public DbSet<Employee> Employees { get; set; }
         public DbSet<Item> Items { get; set; }
