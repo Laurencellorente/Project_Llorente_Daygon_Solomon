@@ -1,0 +1,49 @@
+﻿@model IT_ELECTIVE_PREFINALS_PROJECT.ViewModels.TicketDetailsViewModel
+
+<div class="card mt-4 shadow-sm">
+    <div class="card-header bg-dark text-white">
+        <h5 class="mb-0"><i class="bi bi-chat-dots"></i> Ticket Discussion & Comments</h5>
+    </div>
+    <div class="card-body">
+
+        @if (!Model.Comments.Any())
+        {
+            <p class="text-muted">No comments yet. Start the discussion below.</p>
+        }
+        else
+        {
+            <div class="list-group mb-4">
+                @foreach (var comment in Model.Comments)
+                {
+                    <div class="list-group-item @(comment.IsInternal ? "bg-light border-warning" : "")">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h6 class="mb-1">
+                                <i class="bi bi-person-circle"></i>
+                                @(comment.Employee != null ? $"{comment.Employee.FirstName} {comment.Employee.LastName}" : "Customer/User")
+                                @if (comment.IsInternal)
+                                {
+                                    <span class="badge bg-warning text-dark ms-2">Internal Note</span>
+                                }
+                            </h6>
+                            <small class="text-muted">@comment.CreatedAt</small>
+                        </div>
+                        <p class="mb-1 mt-2">@comment.Comment</p>
+                    </div>
+                }
+            </div>
+        }
+
+        <form asp-action="AddComment" method="post">
+            <input type="hidden" name="TicketId" value="@Model.Ticket.Id" />
+            <div class="mb-3">
+                <label for="NewCommentText" class="form-label">Add a Reply / Note</label>
+                <textarea class="form-control" id="NewCommentText" name="NewCommentText" rows="3" required></textarea>
+            </div>
+            <div class="mb-3 form-check">
+                <input type="checkbox" class="form-check-input" id="IsInternal" name="IsInternal" value="true" />
+                <label class="form-check-label" for="IsInternal">Mark as Internal Note (Visible to staff only)</label>
+            </div>
+            <button type="submit" class="btn btn-primary"><i class="bi bi-send"></i> Submit Comment</button>
+        </form>
+    </div>
+</div>
