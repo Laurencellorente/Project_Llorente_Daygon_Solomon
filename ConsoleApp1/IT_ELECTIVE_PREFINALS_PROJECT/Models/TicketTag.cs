@@ -14,4 +14,3 @@ namespace IT_ELECTIVE_PREFINALS_PROJECT.Models
         public Tag? Tag { get; set; }
     }
 }
-}

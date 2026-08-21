@@ -1,0 +1,39 @@
+﻿@model IT_ELECTIVE_PREFINALS_PROJECT.ViewModels.TicketTagAssignmentViewModel
+
+@{
+    ViewData["Title"] = "Manage Tags";
+}
+
+<div class="container mt-4">
+    <h2>Manage Tags for Ticket</h2>
+    <h4 class="text-muted">@Model.TicketSubject</h4>
+    <hr />
+
+    <form asp-action="UpdateTags" method="post">
+        <input type="hidden" name="TicketId" value="@Model.TicketId" />
+
+        <div class="card shadow-sm mb-4">
+            <div class="card-body">
+                <h5>Select Tags</h5>
+                <div class="row">
+                    @for (int i = 0; i < Model.AvailableTags.Count; i++)
+                    {
+                        <div class="col-md-4 mb-2">
+                            <div class="form-check">
+                                <input type="hidden" asp-for="AvailableTags[i].TagId" />
+                                <input type="hidden" asp-for="AvailableTags[i].TagName" />
+                                <input class="form-check-input" asp-for="AvailableTags[i].IsSelected" />
+                                <label class="form-check-label" asp-for="AvailableTags[i].IsSelected">
+                                    <span class="badge bg-secondary">@Model.AvailableTags[i].TagName</span>
+                                </label>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary"><i class="bi bi-save"></i> Save Tag Assignments</button>
+        <a asp-action="Details" asp-route-id="@Model.TicketId" class="btn btn-secondary">Back to Ticket</a>
+    </form>
+</div>
