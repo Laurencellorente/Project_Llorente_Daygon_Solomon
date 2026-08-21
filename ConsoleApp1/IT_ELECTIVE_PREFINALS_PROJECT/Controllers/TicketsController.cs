@@ -1,6 +1,7 @@
-﻿using System.Text;
-using IT_ELECTIVE_PREFINALS_PROJECT.Data;
+﻿using IT_ELECTIVE_PREFINALS_PROJECT.Data;
+using IT_ELECTIVE_PREFINALS_PROJECT.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 
 namespace IT_ELECTIVE_PREFINALS_PROJECT.Controllers
@@ -14,46 +15,36 @@ namespace IT_ELECTIVE_PREFINALS_PROJECT.Controllers
             _context = context;
         }
 
-        // GET: Tickets/ExportCsv
-        [HttpGet]
-        public async Task<IActionResult> ExportCsv()
+        // GET: Tickets/Create
+        public IActionResult Create()
         {
-            // Fetch tickets using available navigation properties
-            var tickets = await _context.Tickets
-                .ToListAsync();
-
-            var builder = new StringBuilder();
-
-            // 1. Header row
-            builder.AppendLine("Ticket ID,Title,Description");
-
-            // 2. Data rows matching your Ticket model
-            foreach (var ticket in tickets)
-            {
-                string ticketId = ticket.Id.ToString();
-                string title = EscapeCsv(ticket.Title);
-                string description = EscapeCsv(ticket.Description);
-
-                builder.AppendLine($"{ticketId},{title},{description}");
-            }
-
-            // 3. Output file
-            byte[] buffer = Encoding.UTF8.GetBytes(builder.ToString());
-            return File(buffer, "text/csv", $"tickets_export_{DateTime.UtcNow:yyyyMMdd_HHmmss}.csv");
+            PopulateDropdowns();
+            return View();
         }
 
-        private static string EscapeCsv(string field)
+        // POST: Tickets/Create
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create([Bind("Id,Title,Description,StatusId,PriorityId,CategoryId,CustomerId,DueAt")] Ticket ticket)
         {
-            if (string.IsNullOrEmpty(field))
-                return "\"\"";
-
-            if (field.Contains(",") || field.Contains("\"") || field.Contains("\n") || field.Contains("\r"))
+            if (ModelState.IsValid)
             {
-                field = field.Replace("\"", "\"\"");
-                return $"\"{field}\"";
+                ticket.CreatedAt = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss");
+                _context.Add(ticket);
+                await _context.SaveChangesAsync();
+                return RedirectToAction("Index");
             }
 
-            return field;
+            PopulateDropdowns(ticket);
+            return View(ticket);
+        }
+
+        private void PopulateDropdowns(Ticket? ticket = null)
+        {
+            ViewBag.StatusId = new SelectList(_context.Statuses, "Id", "Name", ticket?.StatusId);
+            ViewBag.PriorityId = new SelectList(_context.Priorities, "Id", "Name", ticket?.PriorityId);
+            ViewBag.CategoryId = new SelectList(_context.Categories, "Id", "Name", ticket?.CategoryId);
+            ViewBag.CustomerId = new SelectList(_context.Customers, "Id", "CompanyName", ticket?.CustomerId);
         }
     }
 }
