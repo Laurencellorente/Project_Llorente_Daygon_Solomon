@@ -15,50 +15,42 @@ namespace IT_ELECTIVE_PREFINALS_PROJECT.Controllers
             _context = context;
         }
 
-        // GET: Tickets/UpdateStatus/5
-        public async Task<IActionResult> UpdateStatus(int? id)
+        // GET: Tickets/Assign/5
+        public async Task<IActionResult> Assign(int? id)
         {
             if (id == null) return NotFound();
 
             var ticket = await _context.Tickets
-                .Include(t => t.Status)
                 .FirstOrDefaultAsync(m => m.Id == id);
 
             if (ticket == null) return NotFound();
 
-            ViewBag.StatusId = new SelectList(_context.Statuses, "Id", "Name", ticket.StatusId);
+            PopulateEmployeeDropdown();
             return View(ticket);
         }
 
-        // POST: Tickets/UpdateStatus/5
+        // POST: Tickets/Assign/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> UpdateStatus(int id, int statusId)
+        public async Task<IActionResult> Assign(int id, int? assignedEmployeeId)
         {
             var ticket = await _context.Tickets.FindAsync(id);
             if (ticket == null) return NotFound();
 
-            ticket.StatusId = statusId;
+            // Note: Add an AssignedEmployeeId property to your Ticket model if tracked in DB
             _context.Update(ticket);
             await _context.SaveChangesAsync();
 
             return RedirectToAction(nameof(Index));
         }
 
-        // POST: Tickets/QuickStatusUpdate (Inline Quick Actions)
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> QuickStatusUpdate(int id, int statusId)
+        private void PopulateEmployeeDropdown(object? selectedEmployee = null)
         {
-            var ticket = await _context.Tickets.FindAsync(id);
-            if (ticket != null)
-            {
-                ticket.StatusId = statusId;
-                _context.Update(ticket);
-                await _context.SaveChangesAsync();
-            }
+            var employees = _context.Employees
+                .Select(e => new { Id = e.Id, FullName = e.FirstName + " " + e.LastName })
+                .ToList();
 
-            return RedirectToAction(nameof(Index));
+            ViewBag.AssignedEmployeeId = new SelectList(employees, "Id", "FullName", selectedEmployee);
         }
     }
 }
