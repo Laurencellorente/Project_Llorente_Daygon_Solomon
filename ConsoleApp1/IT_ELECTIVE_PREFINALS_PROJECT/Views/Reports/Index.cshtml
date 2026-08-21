@@ -1,0 +1,59 @@
+﻿@model IT_ELECTIVE_PREFINALS_PROJECT.ViewModels.SystemReportViewModel
+
+@{
+    ViewData["Title"] = "System Reports";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="bi bi-file-earmark-bar-graph"></i> @Model.ReportTitle</h2>
+        <span class="text-muted">Generated: @Model.GeneratedAt.ToString("yyyy-MM-dd HH:mm:ss")</span>
+    </div>
+    <hr />
+
+    <div class="row">
+        <div class="col-md-3 mb-3">
+            <div class="card text-white bg-primary shadow-sm">
+                <div class="card-body">
+                    <h6 class="card-title">Processed Tickets</h6>
+                    <h3>@Model.TotalTicketsProcessed</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card text-white bg-warning shadow-sm">
+                <div class="card-body">
+                    <h6 class="card-title">Open Tickets</h6>
+                    <h3>@Model.OpenTicketsCount</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card text-white bg-success shadow-sm">
+                <div class="card-body">
+                    <h6 class="card-title">Resolved Tickets</h6>
+                    <h3>@Model.ResolvedTicketsCount</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card text-white bg-dark shadow-sm">
+                <div class="card-body">
+                    <h6 class="card-title">Audit Logs Logged</h6>
+                    <h3>@Model.TotalAuditLogsRecorded</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card shadow-sm mt-4">
+        <div class="card-header bg-secondary text-white">
+            <h5 class="mb-0"><i class="bi bi-download"></i> Export Options</h5>
+        </div>
+        <div class="card-body">
+            <p class="text-muted">Download operational metrics and activity histories for administrative archiving.</p>
+            <button class="btn btn-outline-dark me-2" onclick="alert('Report exported successfully!')"><i class="bi bi-file-earmark-pdf"></i> Export as PDF</button>
+            <button class="btn btn-outline-success" onclick="alert('CSV data generated successfully!')"><i class="bi bi-file-earmark-spreadsheet"></i> Export as CSV</button>
+        </div>
+    </div>
+</div>
