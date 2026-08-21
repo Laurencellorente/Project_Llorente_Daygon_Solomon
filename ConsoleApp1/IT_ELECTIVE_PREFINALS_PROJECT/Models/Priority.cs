@@ -3,15 +3,13 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace IT_ELECTIVE_PREFINALS_PROJECT.Models
 {
-    [Table("Departments")]
-    public class Department
+    [Table("Priorities")]
+    public class Priority
     {
         [Key]
         public int Id { get; set; }
 
         [Required]
         public string Name { get; set; } = string.Empty;
-
-        public string? Description { get; set; }
     }
 }
